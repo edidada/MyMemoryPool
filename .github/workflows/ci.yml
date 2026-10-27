@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Build & test (${{ matrix.cc }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make CC=${{ matrix.cc }}
+
+      - name: Run tests
+        run: make run
+
+  sanitizers:
+    name: Sanitizers (gcc asan+ubsan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with AddressSanitizer + UBSan
+        run: |
+          gcc -O1 -g -fsanitize=address,undefined -std=c11 -Wall -Wextra \
+              -o test_asan test_mempool.c mempool.c
+
+      - name: Run under sanitizers
+        run: ./test_asan
