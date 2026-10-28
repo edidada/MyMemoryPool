@@ -3,3 +3,6 @@ test_mempool.exe
 test_asan
 *.o
 *.exe
+/build*/
+.DS_Store
+._*
