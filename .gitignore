@@ -3,3 +3,10 @@ test_mempool.exe
 test_asan
 *.o
 *.exe
+
+# Conan
+/build/
+conan_toolchain.cmake
+CMakeUserPresets.json
+conan.lock
+conan_provider.cmake

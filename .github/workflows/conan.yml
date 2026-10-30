@@ -1,0 +1,35 @@
+name: Conan
+
+on:
+  push:
+    branches: [conan]
+  pull_request:
+    branches: [conan]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Conan 2
+        run: pip install "conan>=2.0"
+
+      - name: Detect Conan profile
+        run: conan profile detect --force
+
+      - name: Conan install (toolchain)
+        run: conan install . --output-folder=build --build=missing -s build_type=${{ matrix.build_type }}
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

@@ -126,3 +126,16 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `test_mempool.c`| Correctness and stress tests.                   |
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
+
+## Build with Conan 2 (branch `conan`)
+
+Conan 2 generates a CMake toolchain; CMake still does the actual build.
+
+```sh
+pip install "conan>=2.0"
+conan profile detect
+conan install . --output-folder=build --build=missing -s build_type=Release
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+ctest --test-dir build
+```
