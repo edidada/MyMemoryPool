@@ -126,3 +126,16 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `test_mempool.c`| Correctness and stress tests.                   |
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
+
+## Build with vcpkg (branch `vcpkg`)
+
+vcpkg is used as the CMake toolchain. This project has no external dependencies,
+so `vcpkg install` just validates the manifest; CMake still does the build.
+
+```sh
+./vcpkg/bootstrap-vcpkg.sh
+./vcpkg/vcpkg install
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake -DBUILD_TESTING=ON
+cmake --build build
+ctest --test-dir build
+```

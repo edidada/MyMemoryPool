@@ -3,3 +3,8 @@ test_mempool.exe
 test_asan
 *.o
 *.exe
+
+# vcpkg
+/build/
+vcpkg/
+vcpkg_installed/
