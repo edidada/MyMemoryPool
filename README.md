@@ -126,3 +126,12 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `test_mempool.c`| Correctness and stress tests.                   |
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
+
+## Build with Bazel (branch `bazel`)
+
+Requires Bazel (Bazelisk):
+
+```sh
+bazel build //...
+bazel test //...
+```

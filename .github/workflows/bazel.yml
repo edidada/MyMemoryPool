@@ -1,0 +1,22 @@
+name: Bazel
+
+on:
+  push:
+    branches: [bazel]
+  pull_request:
+    branches: [bazel]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Bazelisk
+        uses: bazelbuild/setup-bazelisk@v2
+
+      - name: Build
+        run: bazel build //...
+
+      - name: Test
+        run: bazel test //... --test_output=errors

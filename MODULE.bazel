@@ -1,0 +1,1 @@
+module(name = "mymemorypool", version = "0.1.0")

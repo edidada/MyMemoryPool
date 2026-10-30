@@ -1,0 +1,12 @@
+cc_library(
+    name = "mempool",
+    srcs = ["mempool.c"],
+    hdrs = ["mempool.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test_mempool",
+    srcs = ["test_mempool.c"],
+    deps = [":mempool"],
+)
