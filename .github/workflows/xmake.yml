@@ -1,0 +1,34 @@
+name: xmake
+
+on:
+  push:
+    branches: [xmake]
+  pull_request:
+    branches: [xmake]
+
+jobs:
+  build-and-test:
+    name: Build & test (${{ matrix.cc }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup xmake
+        uses: xmake-io/github-action@v1
+        with:
+          xmake-version: latest
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+        run: xmake f -m release
+
+      - name: Build
+        run: xmake build
+
+      - name: Test
+        run: xmake run test_mempool

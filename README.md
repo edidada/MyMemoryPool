@@ -126,3 +126,13 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `test_mempool.c`| Correctness and stress tests.                   |
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
+
+## Build with xmake (branch `xmake`)
+
+Requires xmake:
+
+```sh
+xmake f -m release
+xmake build
+xmake run test_mempool
+```
