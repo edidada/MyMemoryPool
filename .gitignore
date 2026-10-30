@@ -3,3 +3,9 @@ test_mempool.exe
 test_asan
 *.o
 *.exe
+
+# Meson
+build/
+builddir/
+meson-info/
+meson-logs/

@@ -126,3 +126,13 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `test_mempool.c`| Correctness and stress tests.                   |
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
+
+## Build with Meson (branch `meson`)
+
+Requires Meson + Ninja:
+
+```sh
+meson setup build
+meson compile -C build
+meson test -C build
+```
