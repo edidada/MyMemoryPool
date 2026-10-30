@@ -14,6 +14,9 @@
  * to the correct free list without any extra bookkeeping tables.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include "mempool.h"
 
 #include <stdlib.h>

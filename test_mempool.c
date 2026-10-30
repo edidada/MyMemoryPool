@@ -5,6 +5,9 @@
  * Sanity: ./test_mempool
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include "mempool.h"
 
 #include <stdio.h>

@@ -1,0 +1,37 @@
+name: Autotools
+
+on:
+  push:
+    branches: [autotools]
+  pull_request:
+    branches: [autotools]
+
+jobs:
+  build-and-test:
+    name: Build & test (${{ matrix.cc }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install GNU Autotools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake
+
+      - name: Bootstrap (autoreconf -i)
+        run: autoreconf -i
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+        run: ./configure
+
+      - name: Build
+        run: make
+
+      - name: Test (make check)
+        run: make check
