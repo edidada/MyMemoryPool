@@ -17,10 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup xmake
-        uses: xmake-io/github-action@v1
-        with:
-          xmake-version: latest
+      - name: Install xmake
+        run: |
+          curl -fsSL https://xmake.io/sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Configure
         env:
