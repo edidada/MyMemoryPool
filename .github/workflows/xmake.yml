@@ -18,9 +18,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Install xmake
-        run: |
-          curl -fsSL https://xmake.io/sh | bash
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        run: curl -fsSL https://xmake.io/sh | sudo bash
 
       - name: Configure
         env:
