@@ -19,8 +19,8 @@ jobs:
 
       - name: Install xmake
         run: |
-          curl -fsSL https://raw.githubusercontent.com/xmake-io/xmake/master/scripts/get.sh -o /tmp/xmake-get.sh
-          sudo bash /tmp/xmake-get.sh --prefix /usr/local
+          curl -fsSL https://xmake.io/sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           xmake --version
 
       - name: Configure
