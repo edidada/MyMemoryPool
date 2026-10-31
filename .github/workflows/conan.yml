@@ -24,11 +24,9 @@ jobs:
         run: conan profile detect --force
 
       - name: conan create (build, package, run test_package)
-        # `conan create` builds the package, installs it into the local cache,
-        # then builds & runs test_package/ which does find_package(mempool).
         run: conan create . --build=missing -s build_type=${{ matrix.build_type }}
 
-      - name: Sanity: consume the cached package via find_package
+      - name: Sanity consume cached package
         run: |
           mkdir -p /tmp/consumer && cd /tmp/consumer
           conan install --requires=mempool/0.1.0 -s build_type=${{ matrix.build_type }} --output-folder=out
