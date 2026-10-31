@@ -3,3 +3,4 @@ test_mempool.exe
 test_asan
 *.o
 *.exe
+.idea/
