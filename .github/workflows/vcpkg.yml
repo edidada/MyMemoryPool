@@ -1,0 +1,57 @@
+name: vcpkg
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  vcpkg-build:
+    name: vcpkg ${{ matrix.triplet }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest,   triplet: x64-linux }
+          - { os: windows-latest, triplet: x64-windows }
+          - { os: macos-latest,   triplet: x64-osx }
+          - { os: macos-latest,   triplet: arm64-osx }
+          - { os: macos-latest,   triplet: arm64-ios }
+          - { os: ubuntu-latest,  triplet: arm64-android }
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Install Android NDK
+        if: ${{ matrix.triplet == 'arm64-android' }}
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+
+      - name: Export ANDROID_NDK
+        if: ${{ matrix.triplet == 'arm64-android' }}
+        shell: bash
+        run: echo "ANDROID_NDK=$ANDROID_NDK_HOME" >> "$GITHUB_ENV"
+
+      - name: Bootstrap vcpkg
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then ./vcpkg/bootstrap-vcpkg.bat; else ./vcpkg/bootstrap-vcpkg.sh; fi
+
+      - name: vcpkg install
+        shell: bash
+        run: ./vcpkg/vcpkg install memorypool:${{ matrix.triplet }}
+
+      - name: Verify installed library
+        shell: bash
+        run: |
+          LIB="vcpkg/installed/${{ matrix.triplet }}/lib/libmempool.a"
+          if [ ! -f "$LIB" ]; then LIB="vcpkg/installed/${{ matrix.triplet }}/lib/mempool.lib"; fi
+          if [ -f "$LIB" ]; then echo "BUILD OK: $LIB"; else echo "MISSING: $LIB"; ls -R vcpkg/installed/${{ matrix.triplet }}; exit 1; fi
