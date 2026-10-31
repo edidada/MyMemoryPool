@@ -4,8 +4,12 @@ test_asan
 *.o
 *.exe
 
+# IDE
+.idea/
+
 # Conan
 /build/
+build/
 conan_toolchain.cmake
 CMakeUserPresets.json
 conan.lock

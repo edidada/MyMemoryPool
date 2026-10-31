@@ -127,15 +127,41 @@ size_t     mempool_allocated_count(mempool_t *pool);
 | `Makefile`      | Build rules.                                    |
 | `.github/workflows/ci.yml` | CI: build + test on gcc/clang, plus sanitizers. |
 
-## Build with Conan 2 (branch `conan`)
+## Build with Conan 2 (`conan create`) — branch `conan`
 
-Conan 2 generates a CMake toolchain; CMake still does the actual build.
+This branch packages `mempool` as a real Conan 2 package that downstream
+projects can consume with `find_package(mempool)` (exposing the
+`mempool::mempool` target).
 
 ```sh
 pip install "conan>=2.0"
 conan profile detect
-conan install . --output-folder=build --build=missing -s build_type=Release
-cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-ctest --test-dir build
+# Build, package into the local cache, then build & run test_package/
+conan create . --build=missing -s build_type=Release
+conan create . --build=missing -s build_type=Debug
 ```
+
+`conan create` runs `test_package/conanfile.py`, which does:
+
+```cmake
+find_package(mempool CONFIG REQUIRED)
+target_link_libraries(test_package PRIVATE mempool::mempool)
+```
+
+### Consuming the package elsewhere
+
+```sh
+conan install --requires=mempool/0.1.0 --output-folder=out -s build_type=Release
+cmake -S . -B out -DCMAKE_TOOLCHAIN_FILE=out/conan_toolchain.cmake
+cmake --build out
+```
+
+Files:
+
+| File                       | Purpose                                            |
+|----------------------------|----------------------------------------------------|
+| `conanfile.py`             | Conan 2 recipe (CMakeToolchain/Deps, package).     |
+| `CMakeLists.txt`           | Builds `mempool` lib + install rules + CMake config.|
+| `mempool-config.cmake.in`  | Package config template (installed for find_package).|
+| `test_package/`            | Consumer that validates `find_package(mempool)`.    |
+| `.github/workflows/conan.yml` | CI: `conan create` on Release/Debug.              |

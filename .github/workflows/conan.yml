@@ -7,7 +7,8 @@ on:
     branches: [conan]
 
 jobs:
-  build-and-test:
+  build-package-and-test:
+    name: conan create (${{ matrix.build_type }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -22,14 +23,12 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
 
-      - name: Conan install (toolchain)
-        run: conan install . --output-folder=build --build=missing -s build_type=${{ matrix.build_type }}
+      - name: conan create (build, package, run test_package)
+        # `conan create` builds the package, installs it into the local cache,
+        # then builds & runs test_package/ which does find_package(mempool).
+        run: conan create . --build=missing -s build_type=${{ matrix.build_type }}
 
-      - name: Configure
-        run: cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-
-      - name: Build
-        run: cmake --build build
-
-      - name: Test
-        run: ctest --test-dir build --output-on-failure
+      - name: Sanity: consume the cached package via find_package
+        run: |
+          mkdir -p /tmp/consumer && cd /tmp/consumer
+          conan install --requires=mempool/0.1.0 -s build_type=${{ matrix.build_type }} --output-folder=out
