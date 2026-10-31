@@ -4,3 +4,6 @@ test_asan
 *.o
 *.exe
 .idea/
+/build*/
+.DS_Store
+._*

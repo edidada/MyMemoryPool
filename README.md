@@ -1,5 +1,20 @@
 # MyMemoryPool
 
+## CMake 构建与测试
+
+需要 CMake 3.16 或更新版本，以及支持 C11 的 C 编译器。
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+cmake --build build --config Release --parallel
+ctest --test-dir build -C Release --verbose --output-on-failure
+```
+
+构建生成 `mempool` 静态库和 `test_mempool` 测试程序。CTest 检查程序退出码及
+`ALL TESTS PASSED` 输出，覆盖基本分配、空指针处理、多种大小、内存复用及
+20 万次随机分配/释放。`.github/workflows/cmake.yml` 在 `cmake` 分支推送、
+Pull Request 或手动触发时，验证 Linux、Windows、macOS 的 Debug/Release 构建与运行。
+
 一般工程里不推荐你写，因为你费力写一个出来99%可能性没有内置的好，且内存出bug难调试
 实在闲着蛋疼，你也可以当个玩具写写玩玩：
 1. 实现教科书上的内存分配器：
