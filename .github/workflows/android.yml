@@ -1,0 +1,43 @@
+name: Android
+
+on:
+  push:
+    branches: [feature/android]
+  pull_request:
+    branches: [feature/android]
+
+jobs:
+  build-android:
+    name: Build Android (NDK)
+    runs-on: ubuntu-latest
+    env:
+      NDK_VERSION: r26b
+      NDK_ZIP: android-ndk-r26b-linux.zip
+      NDK_HOME: ${{ github.workspace }}/android-ndk
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Cache Android NDK
+        id: ndk-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NDK_HOME }}
+          key: android-ndk-${{ env.NDK_VERSION }}
+
+      - name: Download Android NDK
+        if: steps.ndk-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -L -o "$NDK_ZIP" "https://dl.google.com/android/repository/$NDK_ZIP"
+          unzip -q "$NDK_ZIP" -d "$NDK_HOME"
+          rm -f "$NDK_ZIP"
+
+      - name: Build Android libraries (standalone script)
+        env:
+          ANDROID_NDK: ${{ env.NDK_HOME }}/android-ndk-${{ env.NDK_VERSION }}
+        run: ./scripts/build-android.sh
+
+      - name: Upload Android libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: mempool-android
+          path: build-android
