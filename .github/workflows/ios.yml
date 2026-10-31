@@ -1,0 +1,26 @@
+name: iOS
+
+on:
+  push:
+    branches: [feature/ios]
+  pull_request:
+    branches: [feature/ios]
+
+jobs:
+  build-ios:
+    name: Build iOS (xcframework)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Ensure CMake
+        run: brew install cmake || true
+
+      - name: Build iOS xcframework (standalone script)
+        run: ./scripts/build-ios.sh
+
+      - name: Upload iOS xcframework
+        uses: actions/upload-artifact@v4
+        with:
+          name: mempool-ios
+          path: build-ios/mempool.xcframework
